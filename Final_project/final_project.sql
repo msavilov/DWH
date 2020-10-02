@@ -52,16 +52,16 @@ ALTER TABLE itogovay_dwh.dim_calendar ADD PRIMARY KEY (id);
 --создаю справочник пассажиров
 DROP TABLE IF EXISTS itogovay_dwh.Dim_Passengers;
 CREATE TABLE itogovay_dwh.Dim_Passengers(
-	id serial PRIMARY KEY,
-	passenger_id varchar(20),	
+	id serial NOT NULL,
+	passenger_id varchar(20) PRIMARY KEY,	
 	passenger_name text,	
 	contact_data varchar(100)
 );
 --создаю error-справочник пассажиров
 DROP TABLE IF EXISTS itogovay_dwh.rejected_Dim_Passengers;
 CREATE TABLE itogovay_dwh.rejected_Dim_Passengers(
-	id serial PRIMARY KEY,
-	passenger_id varchar(20),	
+	id serial,
+	passenger_id varchar(20) PRIMARY KEY,	
 	passenger_name text,	
 	contact_data varchar(100)
 );
@@ -69,16 +69,16 @@ CREATE TABLE itogovay_dwh.rejected_Dim_Passengers(
 --создаю справочник самолётов
 DROP TABLE IF EXISTS itogovay_dwh.Dim_Aircrafts;
 CREATE TABLE itogovay_dwh.Dim_Aircrafts(
-	id serial PRIMARY KEY,		
-	aircraft_code varchar(3),	
+	id serial NOT NULL,		
+	aircraft_code varchar(3) PRIMARY KEY,	
 	model varchar(100),	
 	"range" smallint
 );
 --создаю error-справочник самолётов
 DROP TABLE IF EXISTS itogovay_dwh.rejected_Dim_Aircrafts;
 CREATE TABLE itogovay_dwh.rejected_Dim_Aircrafts(
-	id serial PRIMARY KEY,		
-	aircraft_code varchar(3),	
+	id serial NOT NULL,		
+	aircraft_code varchar(3) PRIMARY KEY,	
 	model varchar(100),	
 	"range" smallint
 );
@@ -86,8 +86,8 @@ CREATE TABLE itogovay_dwh.rejected_Dim_Aircrafts(
 --создаю справочник аэропортов
 DROP TABLE IF EXISTS itogovay_dwh.Dim_Airports;
 CREATE TABLE itogovay_dwh.Dim_Airports(
-	id serial PRIMARY KEY,
-	airport_code varchar(3),
+	id serial NOT NULL,
+	airport_code varchar(3) PRIMARY KEY,
 	airport_name varchar(100),	
 	city varchar(100),	
 	coordinates varchar(100),
@@ -96,8 +96,8 @@ CREATE TABLE itogovay_dwh.Dim_Airports(
 --создаю error-справочник аэропортов
 DROP TABLE IF EXISTS itogovay_dwh.rejected_Dim_Airports;
 CREATE TABLE itogovay_dwh.rejected_Dim_Airports(
-	id serial PRIMARY KEY,
-	airport_code varchar(3),
+	id serial NOT NULL,
+	airport_code varchar(3) PRIMARY KEY,
 	airport_name varchar(100),	
 	city varchar(100),	
 	coordinates varchar(100),
@@ -107,43 +107,43 @@ CREATE TABLE itogovay_dwh.rejected_Dim_Airports(
 --создаю справочник тарифов
 DROP TABLE IF EXISTS itogovay_dwh.Dim_Tariff;
 CREATE TABLE itogovay_dwh.Dim_Tariff(
-	id serial PRIMARY KEY,
-	fare_conditions varchar(20)
+	id serial NOT NULL,
+	fare_conditions varchar(20) PRIMARY KEY
 );
 --создаю error-справочник тарифов
 DROP TABLE IF EXISTS itogovay_dwh.rejected_Dim_Tariff;
 CREATE TABLE itogovay_dwh.rejected_Dim_Tariff(
-	id serial PRIMARY KEY,
-	fare_conditions varchar(20)
+	id serial NOT NULL,
+	fare_conditions varchar(20) PRIMARY KEY
 );
 
 --создаю итоговую таблицу
 DROP TABLE IF EXISTS itogovay_dwh.Fact_Flights;
 CREATE TABLE itogovay_dwh.Fact_Flights (
 	id serial PRIMARY KEY,
-	passenger_name TEXT REFERENCES itogovay_dwh.Dim_Passengers(id),
+	passenger_id varchar(100) REFERENCES itogovay_dwh.Dim_Passengers(passenger_id),
 	actual_departure timestamp,
 	actual_arrival timestamp,
 	delayed_departure bigint,
 	delayed_arrival bigint,
-	aircraft_type SMALLINT REFERENCES itogovay_dwh.Dim_Aircrafts(id),
-	airport_departure SMALLINT REFERENCES itogovay_dwh.Dim_Airports(id),
-	airport_arrival SMALLINT REFERENCES itogovay_dwh.Dim_Airports(id),
-	fare_conditions SMALLINT REFERENCES itogovay_dwh.Dim_Tariff(id),
+	aircraft_type varchar(5) REFERENCES itogovay_dwh.Dim_Aircrafts(aircraft_code),
+	airport_departure varchar(5) REFERENCES itogovay_dwh.Dim_Airports(airport_code),
+	airport_arrival varchar(5) REFERENCES itogovay_dwh.Dim_Airports(airport_code),
+	fare_conditions varchar(20) REFERENCES itogovay_dwh.Dim_Tariff(fare_conditions),
 	total_amount int
 );
 --создаю итоговую error-таблицу
 DROP TABLE IF EXISTS itogovay_dwh.rejected_Fact_Flights;
 CREATE TABLE itogovay_dwh.rejected_Fact_Flights (
 	id serial PRIMARY KEY,
-	passenger_name TEXT REFERENCES itogovay_dwh.Dim_Passengers(passenger_name),
+	passenger_id varchar(20),
 	actual_departure timestamp,
 	actual_arrival timestamp,
 	delayed_departure bigint,
 	delayed_arrival bigint,
-	aircraft_type SMALLINT REFERENCES itogovay_dwh.Dim_Aircrafts(id),
-	airport_departure SMALLINT REFERENCES itogovay_dwh.Dim_Airports(id),
-	airport_arrival SMALLINT REFERENCES itogovay_dwh.Dim_Airports(id),
-	fare_conditions SMALLINT REFERENCES itogovay_dwh.Dim_Tariff(id),
+	aircraft_type varchar(5) ,
+	airport_departure varchar(5),
+	airport_arrival varchar(5),
+	fare_conditions varchar(20),
 	total_amount int
 );
